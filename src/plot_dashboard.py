@@ -71,7 +71,32 @@ bar2 = (
     )
 )
 
+# ---------- 图4: 批发-零售价差对比（元/斤）----------
+rt = pd.read_csv("data/clean_retail.csv")
+rt_med = rt["price_yuan_jin"].median()
+rt_min, rt_max = rt["price_yuan_jin"].min(), rt["price_yuan_jin"].max()
+wh_recent = df[df["date"] >= df["date"].max() - pd.Timedelta(days=7)]["price_yuan_jin"].mean()
+
+diff = (
+    Bar(init_opts=opts.InitOpts(width="100%", height="350px", theme="light"))
+    .add_xaxis(["同期批发均价", "电商零售最低", "电商零售中位", "电商零售最高"])
+    .add_yaxis("价格(元/斤)", [round(wh_recent, 2), round(rt_min, 2), round(rt_med, 2), round(rt_max, 2)],
+               label_opts=opts.LabelOpts(is_show=True, position="top", font_size=12, font_weight="bold"))
+    .set_global_opts(
+        title_opts=opts.TitleOpts(
+            title=f"批发-零售价差对比（零售中位约为批发的 {rt_med / wh_recent:.1f} 倍）",
+            pos_left="center"),
+        yaxis_opts=opts.AxisOpts(name="元/斤", min_=0),
+        legend_opts=opts.LegendOpts(is_show=False),
+    )
+)
+diff.options["series"][0]["data"] = [
+    {"value": v, "itemStyle": {"color": c}}
+    for v, c in zip([round(wh_recent, 2), round(rt_min, 2), round(rt_med, 2), round(rt_max, 2)],
+                    ["#8FA8BF", "#E2A33C", "#C8102E", "#E2A33C"])
+]
+
 page = Page(layout=Page.SimplePageLayout, page_title="赣南脐橙价格数据监控")
-page.add(line, bar, bar2)
+page.add(line, bar, bar2, diff)
 page.render("output/index.html")
-print("已生成 output/index.html")
+print("已生成 output/index.html（含 4 张图）")
