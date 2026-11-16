@@ -7,6 +7,10 @@
 import pandas as pd
 from pyecharts import options as opts
 from pyecharts.charts import Bar, Line, Page
+from pyecharts.globals import CurrentConfig
+
+# 关键：使用本地 echarts 资源，避免依赖国外 CDN（离线也能打开）
+CurrentConfig.ONLINE_HOST = "./assets/"
 
 df = pd.read_csv("data/clean_wholesale.csv", parse_dates=["date"])
 df = df.sort_values("date")
