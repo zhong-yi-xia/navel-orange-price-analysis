@@ -51,7 +51,7 @@ def clean_wholesale() -> pd.DataFrame:
     # 赣南脐橙上市季: 11月-次年2月
     df["is_season"] = df["month"].isin([11, 12, 1, 2]).astype(int)
 
-    out = df[["date", "year", "month", "is_season", "price_yuan_jin", "price_yuan_kg"]]
+    out = df[["date", "year", "month", "is_season", "price_yuan_jin", "price_yuan_kg", "records"]]
     out.to_csv("data/clean_wholesale.csv", index=False, encoding="utf-8-sig")
 
     print(f"[批发价] 原始 {raw_len} 条 -> 清洗后 {len(out)} 条"
